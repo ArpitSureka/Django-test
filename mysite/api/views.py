@@ -2,7 +2,8 @@ from django.shortcuts import render
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from .models import RealEstate
-from .serializers import RealEstateSerializer
+from .serializers import *
+from rest_framework import status
 
 @api_view(['GET'])
 def budget_homes(request):
@@ -54,5 +55,18 @@ def homes_by_year(request):
     serializer = RealEstateSerializer(homes, many=True)
     return Response(serializer.data)
 
+@api_view(['POST'])
+def calculate_home_value(request):
+    serializer = HomeInputSerializer(data=request.data)
+    
+    if serializer.is_valid():
+        # Here you can implement your logic to calculate the home value
+        # For simplicity, let's assume the value is calculated as follows:
+        data = serializer.validated_data
+        estimated_value = (((data['bedrooms'] * data['bathrooms']*(data['sqft_living'] / data['sqft_lot']) * data['floors']) + data['waterfront'] - data['view'])* data['condition']*(data['sqft_above'] + data['sqft_basement'])) *100
 
+        
+        return Response({'estimated_value': estimated_value}, status=status.HTTP_200_OK)
+    
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
