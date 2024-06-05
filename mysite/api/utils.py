@@ -7,7 +7,7 @@ def load_csv_data(file_path):
         reader = csv.DictReader(file)
         for row in reader:
             real_estate = RealEstate(
-                date=datetime.strptime(row['date'], '%m-%d-%Y %H:%M'),
+                date=datetime.strptime(row['date'], '%d-%m-%Y %H:%M'),
                 price=int(row['price']),
                 bedrooms=int(row['bedrooms']),
                 bathrooms=float(row['bathrooms']),
